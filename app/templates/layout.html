@@ -11,13 +11,13 @@
   <link rel="apple-touch-icon" href="%% url_for('static',filename='images/apple-touch-icon.png') %%">
     
     <link href="%% url_for('bower.static', filename='bootstrap/dist/css/bootstrap.min.css')%%" rel="stylesheet" media="screen">
-    <#<style type="text/css">
-      .container {
-        max-width: 500px;
-        padding-top: 100px;
+    <style type="text/css">
+      .brand-image {
+        max-width: 128px;
+        padding-top: 0px;
       }
-      h2 {color: red;}
-    </style>#>
+      
+    </style>
   </head>
   <body>
   <div class="container">
@@ -29,18 +29,21 @@
     <script src="%% url_for('bower.static', filename='bootstrap-combobox/js/bootstrap-combobox.js') %%"> 
     </script>
     
-    <div class="navbar">
-    <a href="#" class="navbar-brand"><img src="%% url_for('static',filename='images/HITZ.png') %%" alt="Hitz" class="img-responsive"></a>
+    <nav class="navbar navbar-default">
+    <div class="container=fluid">
+    <div class="navbar-header">
+    <a href="#" class="navbar-brand"><img src="%% url_for('static',filename='images/HITZ.png') %%" alt="Hitz" class="img-responsive brand-image"></a>
+    </div>
     <ul class="nav navbar-nav">
+
             %% nav_link('index', 'Home') %%
             %% nav_link('players', 'Players') %%
             %% nav_link('games', 'Games') %%
             %% nav_link('admin', 'Admin')%%
     </ul>
     </div>
-    <div class="jumbotron">
-    hi!
-    </div>
+    </nav>
+
     <div class="container">
      
       <br>
@@ -48,8 +51,7 @@
       <br>
       
     </div>
-    </div>
-    </div>
+    
     
     
   </body>
