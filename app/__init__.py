@@ -21,7 +21,7 @@ app.config.from_object('config.StagingConfig')
 db = flask.ext.sqlalchemy.SQLAlchemy(app)
 #api = Api(app)
 
-bow = Bower(app)
+Bower(app)
 from models import Hitter, Team, Game
 from app import views, models
 

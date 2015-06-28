@@ -5,8 +5,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><% block title %><% end block %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><% block title %><% endblock %></title>
+    <link rel="shortcut icon" href="%% url_for('static',filename='images/favicon.ico') %%" type="image/x-icon">
+  <link rel="apple-touch-icon" href="%% url_for('static',filename='images/apple-touch-icon.png') %%">
+    
     <link href="%% url_for('bower.static', filename='bootstrap/dist/css/bootstrap.min.css')%%" rel="stylesheet" media="screen">
     <#<style type="text/css">
       .container {
@@ -17,14 +20,26 @@
     </style>#>
   </head>
   <body>
+  <div class="container">
+    <script src="%% url_for('bower.static', filename='bootstrap/dist/js/bootstrap.min.js') %%">
+    </script>
+    <script src="%% url_for('bower.static', filename='jquery/dist/jquery.js') %%">
+    </script>
+    
+    <script src="%% url_for('bower.static', filename='bootstrap-combobox/js/bootstrap-combobox.js') %%"> 
+    </script>
+    
     <div class="navbar">
-    <a href="#" class="navbar-brand">Hitz</a>
+    <a href="#" class="navbar-brand"><img src="%% url_for('static',filename='images/HITZ.png') %%" alt="Hitz" class="img-responsive"></a>
     <ul class="nav navbar-nav">
-            {{ nav_link('index', 'Home') }}
-            {{ nav_link('players', 'Players') }}
-            {{ nav_link('games', 'Games') }}
-            {{ nav_link('admin', 'Admin')}}
+            %% nav_link('index', 'Home') %%
+            %% nav_link('players', 'Players') %%
+            %% nav_link('games', 'Games') %%
+            %% nav_link('admin', 'Admin')%%
     </ul>
+    </div>
+    <div class="jumbotron">
+    hi!
     </div>
     <div class="container">
      
@@ -33,9 +48,9 @@
       <br>
       
     </div>
+    </div>
+    </div>
     
-    <script src="%% url_for('bower.static', filename='bootstrap/dist/js/bootstrap.min.js') %%"></script>
-    <script src="%% url_for('bower.static', filename='jquery/dist/jquery.js') %%"></script>
-    <script src="%% url_for('bower.static', filename='bootstrap-combobox/js/bootstrap-combobox.js') %%"></script>
+    
   </body>
 </html>
