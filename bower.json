@@ -1,0 +1,21 @@
+{
+  "name": "hitzapp",
+  "version": "0.0.1",
+  "authors": [
+    "nickdanger3d <nick@bonfatti.net>"
+  ],
+  "description": "HitzApp",
+  "main": "index.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-combobox": "~1.1.6",
+    "bootstrap": "~3.3.5"
+  }
+}
