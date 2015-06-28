@@ -18,10 +18,10 @@ class CustomFlask(Flask):
 
 app = CustomFlask(__name__)
 app.config.from_object('config.StagingConfig')
-db = flask.exst.sqlalchemy.SQLAlchemy(app)
+db = flask.ext.sqlalchemy.SQLAlchemy(app)
 #api = Api(app)
 
-bow = Bower(App)
+bow = Bower(app)
 from models import Hitter, Team, Game
 from app import views, models
 
