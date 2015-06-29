@@ -3,6 +3,7 @@ from flask import Flask
 import flask.ext.sqlalchemy
 from flask.ext.restful import Api, Resource
 from flask.ext.bower import Bower
+from flask_admin import Admin
 
 
 class CustomFlask(Flask):
@@ -22,6 +23,7 @@ db = flask.ext.sqlalchemy.SQLAlchemy(app)
 #api = Api(app)
 
 Bower(app)
+admin = Admin(app, name='HitzSkill Admin')
 from models import Hitter, Team, Game
 from app import views, models
 

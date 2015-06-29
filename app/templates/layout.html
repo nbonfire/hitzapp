@@ -19,29 +19,31 @@
       }
       
     </style>
-  </head>
-  <body>
-  <div class="container">
-    <script src="%% url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') %%">
+        <script src="%% url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') %%">
     </script>
     <script src="%% url_for('static', filename='bower_components/jquery/dist/jquery.js') %%">
     </script>
     
     <script src="%% url_for('static', filename='bower_components/bootstrap-combobox/js/bootstrap-combobox.js') %%"> 
     </script>
+  </head>
+  <body>
+  <div class="container">
+
     
     <nav class="navbar navbar-default">
     <div class="container=fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#hitz-menu-navbar-collapse-1" aria-expanded="false">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-    <a href="#" class="navbar-brand"><img src="%% url_for('static',filename='images/HITZ.png') %%" alt="Hitz" class="img-responsive brand-image"></a>
+    <a href="#" class="navbar-brand"><img src="%% url_for('static',filename='images/HITZ.png') %%" alt="Hitz" class="img-responsive brand-image">&nbsp;</a>
     </div>
-    <ul class="nav navbar-nav">
+    <div class="collapse navbar-collapse" id="hitz-menu-navbar-collapse-1">
+    <ul class="nav navbar-nav navbar-nav-right">
 
             %% nav_link('index', 'Home') %%
             %% nav_link('players', 'Players') %%
@@ -49,8 +51,10 @@
             %% nav_link('admin', 'Admin')%%
     </ul>
     </div>
+    </div>
+    
     </nav>
-
+    </div>
     <div class="container">
      
       <br>
