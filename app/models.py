@@ -234,3 +234,81 @@ class Game(db.Model):
                         'away':self.awaypoints
                     }
         }
+
+
+def jsonbackup(session):
+    results = []
+    names = []
+    allgames = session.query(Game).all()
+    allhitters=session.query(Hitter).all()
+    for hitter in allhitters:
+        names.append(hitter.name)
+
+    for game in allgames:
+        results.append(game._asdict())
+
+    with io.open('playersbackup-%s.txt'% str(db.DateTime.date.today()), 'w', encoding='utf-8') as fn:
+        fn.write(unicode(json.dumps(names, ensure_ascii=False)))
+    with io.open('gamesbackup-%s.txt'% str(db.DateTime.date.today()), 'w', encoding='utf-8') as fg:
+        fg.write(unicode(json.dumps(results, ensure_ascii=False)))
+    return json.dumps(results)
+
+def jsonrestore(namefile='playersbackup.txt', gamefile='gamesbackup.txt'):
+    if not os.path.exists('hitz.sqlite'):
+        session=standaloneSetup()
+        results=[]
+        names=[]
+
+        with io.open(namefile, 'r', encoding='utf-8') as fn:
+            names=json.loads(fn.read())
+        with io.open(gamefile, 'r', encoding='utf-8') as fg:
+            results=json.loads(fg.read())
+        #pprint.pprint(names)
+        #pprint.pprint( results)
+        
+        for name in names:
+            get_or_create(session, Hitter, name=name)
+        for game in results:
+            completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], db.DateTime.db.DateTime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
+        session.close()
+    else:
+        print "DB file hitz.sqlite already exists. Delete or move it before running this command."
+
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        return instance
+    # myHitter = get_or_create(session, Hitter, name=hitterName)
+def get_or_create_team(session, findplayers):
+    #print findplayers
+    create_team = session.query(Team).filter(Team.hitters.any(Hitter.name==findplayers[0])).filter(Team.hitters.any(Hitter.name==findplayers[1])).filter(Team.hitters.any(Hitter.name==findplayers[2])).first()
+    #session.query(Team).filter(Team.players.in_()) session.query(Hitter).name.in_(session)
+    if not create_team:
+        #create_team = Team()
+        hittersforthisteam = []
+        for newplayer in findplayers:
+            hittersforthisteam.append(session.query(Hitter).filter_by(name=newplayer).first())
+        if len(hittersforthisteam)<3:
+            print "invalid player in list: %s" % findplayers
+            return False
+        else:
+            create_team = Team()
+            create_team.hitters = hittersforthisteam
+            session.add(create_team)
+            session.commit()
+    return create_team
+
+def standaloneSetup():
+    engine = create_engine('sqlite:///hitz.sqlite')
+    
+
+    Session = sessionmaker(bind=engine)
+
+    session = Session()
+    db.Model.metadata.create_all(engine)
+    return session

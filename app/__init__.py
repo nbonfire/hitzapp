@@ -4,6 +4,8 @@ import flask.ext.sqlalchemy
 from flask.ext.restful import Api, Resource
 from flask.ext.bower import Bower
 from flask_admin import Admin
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.admin.contrib.sqla import ModelView
 
 
 class CustomFlask(Flask):
@@ -23,10 +25,14 @@ db = flask.ext.sqlalchemy.SQLAlchemy(app)
 #api = Api(app)
 
 Bower(app)
-admin = Admin(app, name='HitzSkill Admin')
-from models import Hitter, Team, Game
-from app import views, models
 
+from models import Hitter, Team, Game
+#from app import models
+from views import *
+from models import *
+admin = Admin(app, name='HitzSkill Admin')
+admin.add_view(ModelView(Hitter, db.session))
+admin.add_view(ModelView(Game, db.session))
 #api.add_resource(HitterListApi, '/api/hitters', methods=['GET', 'POST'])
 #api.add_resource(HitterApi, 'api/hitters/<int:id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 
