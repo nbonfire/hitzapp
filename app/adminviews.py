@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
+from flask.admin.forms import rules
 
 from app import app, db
 
