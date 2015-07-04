@@ -262,27 +262,27 @@ def jsonbackup(session):
         fg.write(unicode(json.dumps(results, ensure_ascii=False)))
     return json.dumps(results)
 
-def jsonrestore(namefile='playersbackup.txt', gamefile='gamesbackup.txt'):
-    session=db.session
-    if not os.path.exists('hitz.sqlite'):
+def jsonrestore(session):
+    namefile='playersbackup.txt'
+    gamefile='gamesbackup.txt'
+    
         
-        results=[]
-        names=[]
+    results=[]
+    names=[]
 
-        with io.open(namefile, 'r', encoding='utf-8') as fn:
-            names=json.loads(fn.read())
-        with io.open(gamefile, 'r', encoding='utf-8') as fg:
-            results=json.loads(fg.read())
-        #pprint.pprint(names)
-        #pprint.pprint( results)
+    with io.open(namefile, 'r', encoding='utf-8') as fn:
+        names=json.loads(fn.read())
+    with io.open(gamefile, 'r', encoding='utf-8') as fg:
+        results=json.loads(fg.read())
+    #pprint.pprint(names)
+    #pprint.pprint( results)
         
-        for name in names:
-            get_or_create(session, Hitter, name=name)
-        for game in results:
-            completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], db.DateTime.db.DateTime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
-        session.close()
-    else:
-        print "DB file hitz.sqlite already exists. Delete or move it before running this command."
+    for name in names:
+        get_or_create(session, Hitter, name=name)
+    for game in results:
+        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], db.DateTime.db.DateTime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
+    session.close()
+    
 
 def get_or_create(session, model, **kwargs):
     instance = session.query(model).filter_by(**kwargs).first()
