@@ -235,6 +235,15 @@ class Game(db.Model):
                     }
         }
 
+def standaloneSetup():
+    engine = create_engine('sqlite:///hitz.sqlite')
+    
+
+    Session = sessionmaker(bind=engine)
+
+    session = Session()
+    db.Model.metadata.create_all(engine)
+    return session
 
 def jsonbackup(session):
     results = []
@@ -254,8 +263,9 @@ def jsonbackup(session):
     return json.dumps(results)
 
 def jsonrestore(namefile='playersbackup.txt', gamefile='gamesbackup.txt'):
+    session=db.session
     if not os.path.exists('hitz.sqlite'):
-        session=standaloneSetup()
+        
         results=[]
         names=[]
 
@@ -303,12 +313,3 @@ def get_or_create_team(session, findplayers):
             session.commit()
     return create_team
 
-def standaloneSetup():
-    engine = create_engine('sqlite:///hitz.sqlite')
-    
-
-    Session = sessionmaker(bind=engine)
-
-    session = Session()
-    db.Model.metadata.create_all(engine)
-    return session

@@ -33,6 +33,16 @@ def players():
 def games():
 	return render_template('index.html')
 
+@app.route('/backup')
+def backupDBtoJSON():
+	jsonbackup(session=db.session)
+	return render_template('index.html')
+
+@app.route('/restore')
+def restoreDBfromJSON():
+	jsonrestore()
+	return render_template('index.html')
+
 '''@app.route('/admin')
 def admin():
 	return render_template('index.html')'''

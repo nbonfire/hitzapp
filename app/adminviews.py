@@ -4,6 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 
 from app import app, db
 
+'''
 class MyView(BaseView):
 	def is_accessible(self):
         return login.current_user.is_authenticated()
@@ -14,6 +15,7 @@ class MyView(BaseView):
 	@expose('/')
 	def index(self):
 		return self.render('gameentry.html')
+'''
 
 class GameModelView(ModelView):
 	column_display_all_relations=True
