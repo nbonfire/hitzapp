@@ -30,9 +30,12 @@ from models import Hitter, Team, Game
 #from app import models
 from views import *
 from models import *
+from adminviews import HitzAdminView
 admin = Admin(app, name='HitzSkill Admin')
+admin.add_view(HitzAdminView)
 admin.add_view(ModelView(Hitter, db.session))
 admin.add_view(ModelView(Game, db.session))
+
 #api.add_resource(HitterListApi, '/api/hitters', methods=['GET', 'POST'])
 #api.add_resource(HitterApi, 'api/hitters/<int:id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 
