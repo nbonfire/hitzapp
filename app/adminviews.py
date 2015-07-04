@@ -11,11 +11,13 @@ class HitzAdminView(BaseView):
     def _handle_view(self, name, **kwargs):
         if not self.is_accessible():
             return redirect(url_for('login', next=request.url))
-'''
+	'''
 	@expose('/')
 	def index(self):
 		return self.render('index.html')
 
+class GameRuleView(ModelView):
+	from_create_rules = ('awayteam','awaypoints',rules.Text(' vs. '),'hometeam', 'homepoints', 'winner', 'date', 'event' )
 
 class GameModelView(ModelView):
 	column_display_all_relations=True
