@@ -1,5 +1,5 @@
-from flask import Flask 
-from flask_admin import Admin, BaseView, expose, create_blueprint
+from flask import Flask, Blueprint
+from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 
 from app import app, db

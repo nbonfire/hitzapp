@@ -32,7 +32,7 @@ from views import *
 from models import *
 from adminviews import HitzAdminView
 admin = Admin(app, name='HitzSkill Admin')
-admin.add_view(HitzAdminView)
+#admin.add_view(HitzAdminView)
 admin.add_view(ModelView(Hitter, db.session))
 admin.add_view(ModelView(Game, db.session))
 
