@@ -1,0 +1,18 @@
+{# hitzapp/templates/players.html_ #}
+
+{% extends "layout.html" %}
+{% block title %}HITZ 2002 New England Players League{% endblock %}
+{% block content %}
+    {{ super() }}
+
+    
+
+    <div class="row" id="playerlistblock">
+
+
+    <p class="text-right"><center><table class="table"><tbody>
+            {% for player in players %}
+  <tr><td><a href="player/{{player.name}}">{{player.name}}</a><td>{{player.hitzskill()}}</td><td>(Lifetime:{{player.overallhitzskill()}})</td><td>Record: {{player.recordString()}}</td></tr>
+  {% endfor %}
+          </table>
+{% endblock %}
