@@ -4,6 +4,9 @@
 {% if request.endpoint.endswith(endpoint) %}
     <li class="active"><a href="{{ url_for(endpoint) }}">{{text}}</a></li>
  {% elif endpoint !='admin' %}
-     <li><a href="{{url_for(endpoint)}}">{{text}}</a></li> 
+     <li><a href="{{url_for(endpoint)}}">{{text}}</a></li>
+
+ {% else %} 
+     <li><a href="/admin">Admin</a></li>
 {% endif %}
 {% endmacro %}

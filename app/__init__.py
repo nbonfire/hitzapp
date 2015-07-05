@@ -31,11 +31,11 @@ from models import Hitter, Team, Game
 #from app import models
 from views import *
 from models import *
-from adminviews import HitzAdminView, GameRuleView
+from adminviews import HitzAdminView, GameRuleView, HitterRuleView
 admin = Admin(app, name='HitzSkill Admin')
 #admin.add_view(HitzAdminView)
 #admin.add_view()
-admin.add_view(ModelView(Hitter, db.session))
+admin.add_view(HitterRuleView(Hitter, db.session))
 admin.add_view(GameRuleView(Game, db.session))
 
 #api.add_resource(HitterListApi, '/api/hitters', methods=['GET', 'POST'])
@@ -47,10 +47,3 @@ admin.add_view(GameRuleView(Game, db.session))
 #api.add_resource(GameListApi, '/api/games', methods=['GET', 'POST'])
 #api.add_resource(GameApi, 'api/games/<int:id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 
-@app.route('/hello')
-def hello():
-    return 'Hello World!'
-
-@app.route('/<name>')
-def hello_name(name):
-    return "Hello {}!".format(name)

@@ -17,6 +17,9 @@ class HitzAdminView(BaseView):
 	def index(self):
 		return self.render('index.html')
 
+class HitterRuleView(ModelView):
+	column_formatters=dict(overallrating=lambda v, c, m, p: m.overallrating.mu - (m.overallrating.sigma * 3), rating=lambda v, c, m, p: m.rating.mu - (m.rating.sigma * 3))
+
 class GameRuleView(ModelView):
 	from_create_rules = ('awayteam','awaypoints',rules.Text(' vs. '),'hometeam', 'homepoints', 'winner', 'date', 'event' )
 

@@ -51,7 +51,7 @@ class Hitter(db.Model):
     overallrating = db.Column(db.PickleType)
     rating = db.Column(db.PickleType) # current season rating
     lastGamePlayed = db.Column(db.DateTime)
-    def __init__(self, name,lastGamePlayed = datetime(2013,7,1),rating = env.Rating()):
+    def __init__(self, name='test',lastGamePlayed = datetime(2013,7,1),rating = env.Rating()):
         self.name = name
         self.lastGamePlayed = lastGamePlayed
         self.rating = rating
@@ -256,9 +256,9 @@ def jsonbackup(session):
     for game in allgames:
         results.append(game._asdict())
 
-    with io.open('playersbackup-%s.txt'% str(db.DateTime.date.today()), 'w', encoding='utf-8') as fn:
+    with io.open('playersbackup-%s.txt'% str(datetime.today()), 'w', encoding='utf-8') as fn:
         fn.write(unicode(json.dumps(names, ensure_ascii=False)))
-    with io.open('gamesbackup-%s.txt'% str(db.DateTime.date.today()), 'w', encoding='utf-8') as fg:
+    with io.open('gamesbackup-%s.txt'% str(datetime.today()), 'w', encoding='utf-8') as fg:
         fg.write(unicode(json.dumps(results, ensure_ascii=False)))
     return json.dumps(results)
 
@@ -280,7 +280,7 @@ def jsonrestore(session):
     for name in names:
         get_or_create(session, Hitter, name=name)
     for game in results:
-        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], db.DateTime.db.DateTime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
+        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], datetime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
     session.close()
     
 
@@ -313,3 +313,39 @@ def get_or_create_team(session, findplayers):
             session.commit()
     return create_team
 
+def completeGame(session,homeTeam,awayTeam,winner,awaypoints=0,homepoints=0,datePlayed=datetime.today()):
+    homers=get_or_create_team(session, homeTeam)
+    awayers=get_or_create_team(session, awayTeam)
+    homers.setdatelastplayed(datePlayed)
+    awayers.setdatelastplayed(datePlayed)
+
+    #print "\n----------\n%s vs %s  " % (awayers, homers)
+    
+    if winner=='home':
+        winningteam=get_or_create_team(session, homeTeam)
+        #team rating
+        if (datePlayed>currentseasonstartdate):
+            homers.teamrating,awayers.teamrating = rate_1vs1(homers.teamrating, awayers.teamrating)
+            #individual ratings
+            (awayers.hitters[0].rating, awayers.hitters[1].rating, awayers.hitters[2].rating),(homers.hitters[0].rating, homers.hitters[1].rating, homers.hitters[2].rating) = rate([[awayers.hitters[0].rating, awayers.hitters[1].rating, awayers.hitters[2].rating],[homers.hitters[0].rating, homers.hitters[1].rating, homers.hitters[2].rating]], ranks=[1,0])
+        homers.overallteamrating,awayers.overallteamrating = rate_1vs1(homers.overallteamrating, awayers.overallteamrating)
+        (awayers.hitters[0].overallrating, awayers.hitters[1].overallrating, awayers.hitters[2].overallrating),(homers.hitters[0].overallrating, homers.hitters[1].overallrating, homers.hitters[2].overallrating) = rate([[awayers.hitters[0].overallrating, awayers.hitters[1].overallrating, awayers.hitters[2].overallrating],[homers.hitters[0].overallrating, homers.hitters[1].overallrating, homers.hitters[2].overallrating]], ranks=[1,0])
+
+            
+    else:
+        winningteam=get_or_create_team(session, awayTeam)
+        
+
+        if (datePlayed>currentseasonstartdate):
+            #team ratings
+        
+            awayers.teamrating,homers.teamrating = rate_1vs1(awayers.teamrating, homers.teamrating)
+            #individual ratings
+            (awayers.hitters[0].rating, awayers.hitters[1].rating, awayers.hitters[2].rating),(homers.hitters[0].rating, homers.hitters[1].rating, homers.hitters[2].rating) = rate([[awayers.hitters[0].rating, awayers.hitters[1].rating, awayers.hitters[2].rating],[homers.hitters[0].rating, homers.hitters[1].rating, homers.hitters[2].rating]], ranks=[0,1])
+        awayers.overallteamrating,homers.overallteamrating = rate_1vs1(awayers.overallteamrating, homers.overallteamrating)
+            #individual ratings
+        (awayers.hitters[0].overallrating, awayers.hitters[1].overallrating, awayers.hitters[2].overallrating),(homers.hitters[0].overallrating, homers.hitters[1].overallrating, homers.hitters[2].overallrating) = rate([[awayers.hitters[0].overallrating, awayers.hitters[1].overallrating, awayers.hitters[2].overallrating],[homers.hitters[0].overallrating, homers.hitters[1].overallrating, homers.hitters[2].overallrating]], ranks=[0,1])
+
+    newgame = Game(hometeam=homers, awayteam=awayers, homepoints=homepoints, awaypoints=awaypoints, winner=winningteam,date=datePlayed)
+    session.add(newgame)
+    session.commit()

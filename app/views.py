@@ -27,7 +27,13 @@ def index():
 
 @app.route('/players')
 def players():
-	return render_template('index.html')
+	playerObjects=db.session.query(Hitter).all()
+	return render_template('players.html', players=playerObjects)
+
+@app.route('/player/<player>')
+def player(player):
+	playerObject=get_or_create(db.session, Hitter, name=player)
+	return render_template('player.html', player=playerObject)
 
 @app.route('/games')
 def games():
@@ -40,7 +46,7 @@ def backupDBtoJSON():
 
 @app.route('/restore')
 def restoreDBfromJSON():
-	jsonrestore()
+	jsonrestore(session=db.session)
 	return render_template('index.html')
 
 '''@app.route('/admin')
