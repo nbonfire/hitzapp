@@ -19,7 +19,8 @@ class CustomFlask(Flask):
         comment_end_string='#>',
     ))
 
-app = CustomFlask(__name__)
+#app = CustomFlask(__name__)
+app=Flask(__name__)
 app.config.from_object('config.StagingConfig')
 db = flask.ext.sqlalchemy.SQLAlchemy(app)
 #api = Api(app)
@@ -35,7 +36,7 @@ admin = Admin(app, name='HitzSkill Admin')
 #admin.add_view(HitzAdminView)
 #admin.add_view()
 admin.add_view(ModelView(Hitter, db.session))
-admin.add_view(ModelView(Game, db.session))
+admin.add_view(GameRuleView(Game, db.session))
 
 #api.add_resource(HitterListApi, '/api/hitters', methods=['GET', 'POST'])
 #api.add_resource(HitterApi, 'api/hitters/<int:id>', methods=['GET', 'POST', 'PUT', 'DELETE'])

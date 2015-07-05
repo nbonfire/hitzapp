@@ -1,9 +1,9 @@
-<# hitzapp/templates/macros.html #>
+{# hitzapp/templates/macros.html #}
 
-<% macro nav_link(endpoint, text) %>
-<% if request.endpoint.endswith(endpoint) %>
-    <li class="active"><a href="%% url_for(endpoint) %%">%%text%%</a></li>
- <% elif endpoint !='admin' %>
-     <li><a href="%%url_for(endpoint)%%">%%text%%</a></li> 
-<% endif %>
-<% endmacro %>
+{% macro nav_link(endpoint, text) %}
+{% if request.endpoint.endswith(endpoint) %}
+    <li class="active"><a href="{{ url_for(endpoint) }}">{{text}}</a></li>
+ {% elif endpoint !='admin' %}
+     <li><a href="{{url_for(endpoint)}}">{{text}}</a></li> 
+{% endif %}
+{% endmacro %}

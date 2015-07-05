@@ -1,10 +1,10 @@
-<# hitzapp/templates/index.html_ #>
+{# hitzapp/templates/index.html_ #}
 
-<% extends "layout.html" %>
-<% block title %>HITZ 2002 New England Players League<% endblock %>
-<% block content %>
-    %% super() %%
+{% extends "layout.html" %}
+{% block title %}HITZ 2002 New England Players League{% endblock %}
+{% block content %}
+    {{ super() }}
     <div class="jumbotron">
     <h2>New England NHL Hitz 2002 Players League</h2>
     </div>
-<% endblock %>
+{% endblock %}
