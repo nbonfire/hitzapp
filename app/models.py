@@ -17,7 +17,7 @@ overallenv=TrueSkill()
 teamenv=TrueSkill() #current season
 overallteamenv=TrueSkill()
 
-currentseasonstartdate=datetime(2013,4,21)
+currentseasonstartdate=datetime(2015,3,22)
 
 
 RESET=0
@@ -84,6 +84,8 @@ class Hitter(db.Model):
             'skill':self.hitzskill(),
             'overallskill':self.overallhitzskill()
         }
+    def delete(self):
+        db.session.delete(self)
     
 
 
@@ -169,7 +171,8 @@ class Team(db.Model):
                 "overallteamrating" : self.getoverallteamrating(),
                 "hitters" : [hitter.to_json for hitter in self.hitters],
         }
-    
+    def delete(self):
+        db.session.delete(self)
 
 
     
@@ -234,6 +237,8 @@ class Game(db.Model):
                         'away':self.awaypoints
                     }
         }
+    def delete(self):
+        db.session.delete(self)
 
 def standaloneSetup():
     engine = create_engine('sqlite:///hitz.sqlite')
@@ -266,7 +271,25 @@ def jsonrestore(session):
     namefile='playersbackup.txt'
     gamefile='gamesbackup.txt'
     
-        
+    # need to figure out how to completely wipe the db as part of restore.
+    # For now, run heroku pg:reset <DATABASE> ; heroku run python manage.py db upgrade or heroku run python, from app import db, db.create_all()
+    '''
+    allgames=Game.query.all();
+    allteams=Team.query.all();
+    allhitters=Hitter.query.all();
+
+    for thisgame in allgames:
+        thisgame.delete()
+        session.commit()
+
+    for thisteam in allteams:
+        thisteam.delete()
+        session.commit()
+
+    for thishitter in allhitters:
+        thishitter.delete()
+        session.commit()    
+    ''' 
     results=[]
     names=[]
 
@@ -280,7 +303,7 @@ def jsonrestore(session):
     for name in names:
         get_or_create(session, Hitter, name=name)
     for game in results:
-        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], datetime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
+        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], datetime.strptime(game['date'], '%Y-%m-%d')) # took out  %H:%M:%S
     session.close()
     
 

@@ -1,9 +1,10 @@
 from flask import Flask, Blueprint
-from flask_admin import Admin, BaseView, expose
+from flask_admin import Admin, BaseView, expose, FileAdmin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import rules
 
 from app import app, db
+from models import Hitter, Game, get_or_create, completeGame
 
 
 class HitzAdminView(BaseView):
@@ -26,3 +27,23 @@ class GameRuleView(ModelView):
 class GameModelView(ModelView):
 	column_display_all_relations=True
 	column_list = ('awayteam', 'awaypoints','hometeam', 'homepoints', 'winner', 'date', 'event' )
+
+class HitterFileAdmin(FileAdmin):
+	allowed_extensions=('txt')
+	def on_file_upload(self, directory, path, filename):
+		names=[]
+		with io.open(filename, 'r', encoding='utf-8') as fn:
+        	names=json.loads(fn.read())
+
+        for name in names:
+        	get_or_create(db.session, Hitter, name=name)
+
+class GameFileAdmin(FileAdmin):
+	allowed_extensions=('txt')
+	def on_file_upload(self, directory, path, filename):
+		results=[]
+		with io.open(filename, 'r', encoding='utf-8') as fg:
+        	results=json.loads(fg.read())
+
+        for game in results:
+        	completeGame(db.session, game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], datetime.strptime(game['date'], '%Y-%m-%d'))

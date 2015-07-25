@@ -1,0 +1,13 @@
+{# hitzapp/templates/player.html_ #}
+
+{% extends "layout.html" %}
+{% block title %}HITZ 2002 New England Players League - Recent Games{% endblock %}
+{% block content %}
+    {{ super() }}
+    <div class="jumbotron">
+    <h2>{{player.name}}</h2>
+    <h3>Current Season HitzSkill: {{player.hitzskill()}}</h3>
+    <h3>Overall HitzSkill: {{player.overallhitzskill()}}</h3>
+    <h3>Overall Record: {{player.recordString()}}</h3>
+    </div>
+{% endblock %}
