@@ -30,7 +30,7 @@ class GameModelView(ModelView):
     column_list = ('awayteam', 'awaypoints','hometeam', 'homepoints', 'winner', 'date', 'event' )
 
 class HitterFileAdmin(FileAdmin):
-    allowed_extensions=('txt')
+    #allowed_extensions=('txt')
     def on_file_upload(self, directory, path, filename):
         names=[]
         with io.open(filename, 'r', encoding='utf-8') as fn:
@@ -40,7 +40,7 @@ class HitterFileAdmin(FileAdmin):
             get_or_create(db.session, Hitter, name=name)
 
 class GameFileAdmin(FileAdmin):
-    allowed_extensions=('txt')
+    #allowed_extensions=('txt')
     def on_file_upload(self, directory, path, filename):
         results=[]
         with io.open(filename, 'r', encoding='utf-8') as fg:
