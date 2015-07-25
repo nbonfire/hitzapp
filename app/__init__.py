@@ -37,6 +37,8 @@ admin = Admin(app, name='HitzSkill Admin')
 #admin.add_view()
 admin.add_view(HitterRuleView(Hitter, db.session))
 admin.add_view(GameRuleView(Game, db.session))
+admin.add_view(HitterFileAdmin('/tmp/', '/importhitters/', name='Import Hitter Names'))
+admin.add_view(GameFileAdmin('/tmp/', '/importgames/', name='Import Game Results'))
 
 #api.add_resource(HitterListApi, '/api/hitters', methods=['GET', 'POST'])
 #api.add_resource(HitterApi, 'api/hitters/<int:id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
