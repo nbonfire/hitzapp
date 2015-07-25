@@ -87,8 +87,10 @@ class Hitter(db.Model):
     def delete(self):
         db.session.delete(self)
     
-
-
+'''
+class HitterRatingHistory(db.Model):
+    __tablename__='history'
+'''
 
 
 hitter_team_table = db.Table('hitter_team', db.Model.metadata,
