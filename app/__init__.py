@@ -31,7 +31,7 @@ from models import Hitter, Team, Game
 #from app import models
 from views import *
 from models import *
-from adminviews import HitzAdminView, GameRuleView, HitterRuleView
+from adminviews import HitzAdminView, GameRuleView, HitterRuleView, HitterFileAdmin, GameFileAdmin
 admin = Admin(app, name='HitzSkill Admin')
 #admin.add_view(HitzAdminView)
 #admin.add_view()
