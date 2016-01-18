@@ -3,22 +3,21 @@ from sqlalchemy.dialects.postgresql import JSON
 from flask.ext.restful import Resource, abort
 from flask.ext import restful
 from flask.ext.restful import reqparse
-from sqlalchemy.ext.hybrid import hybrid_property
 
 import json, io, pickle, itertools, pprint, os
 
 from sortedcollection import *
-import trueskill 
+from trueskill import *
 from math import sqrt
 from datetime import datetime
 
 
-env=trueskill.TrueSkill() # current season
-overallenv=trueskill.TrueSkill()
-teamenv=trueskill.TrueSkill() #current season
-overallteamenv=trueskill.TrueSkill()
+env=TrueSkill() # current season
+overallenv=TrueSkill()
+teamenv=TrueSkill() #current season
+overallteamenv=TrueSkill()
 
-currentseasonstartdate=datetime(2013,4,21)
+currentseasonstartdate=datetime(2015,3,22)
 
 
 RESET=0
@@ -48,7 +47,7 @@ class Hitter(db.Model):
     __tablename__='hitters'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
-    teams = db.relationship("Team", backref="hitter")
+    #teams = db.relationship("Team", backref="hitter")
     overallrating = db.Column(db.PickleType)
     rating = db.Column(db.PickleType) # current season rating
     lastGamePlayed = db.Column(db.DateTime)
@@ -85,21 +84,20 @@ class Hitter(db.Model):
             'skill':self.hitzskill(),
             'overallskill':self.overallhitzskill()
         }
+    def delete(self):
+        db.session.delete(self)
     
+'''
+class HitterRatingHistory(db.Model):
+    __tablename__='history'
+'''
 
-
-
-
-hitter_game_table = db.Table('hitter_game', db.Model.metadata,
-    db.Column('game_id', db.Integer, db.ForeignKey('games.id')),
-    db.Column('hitter_id', db.Integer, db.ForeignKey('hitters.id'))
-
-)
 
 hitter_team_table = db.Table('hitter_team', db.Model.metadata,
     db.Column('team_id', db.Integer, db.ForeignKey('teams.id')),
-    db.Column('hitter_id', db.Integer, db.ForeignKey('hitters.id')))
+    db.Column('hitter_id', db.Integer, db.ForeignKey('hitters.id'))
 
+)
 
 class Team(db.Model):
     __tablename__='teams'
@@ -108,18 +106,12 @@ class Team(db.Model):
     teamrating = db.Column(db.PickleType)
     overallteamrating = db.Column(db.PickleType)
     hitters = db.relationship("Hitter", secondary=hitter_team_table, backref='teams')
-    @hybrid_property
-    def containsplayers(self):
-        return '%s, %s, %s, %s, %s | %s, %s, %s, %s, %s' % (self.hitters[0].name, self.hitters[1].name, self.hitters[2].name, self.hitters[0].name, self.hitters[1].name, self.hitters[0].name, self.hitters[2].name, self.hitters[1].name, self.hitters[0].name, self.hitters[2].name,)
 
     def __init__(self):
         self.teamrating = teamenv.Rating()
         self.overallteamrating = overallteamenv.Rating()
     def __repr__(self):
-        return "<%s, %s, %s last played: %s team rating: %.2f>" % (self.hitters[0].name, self.hitters[1].name, self.hitters[2].name, self.getdatelastplayed(),float(self.teamrating.mu - 3.0*self.teamrating.sigma))
-    
-    def __unicode__(self):
-        return "%s, %s, %s last played: %s team rating: %.2f" % (self.hitters[0].name, self.hitters[1].name, self.hitters[2].name, self.getdatelastplayed(),float(self.teamrating.mu - 3.0*self.teamrating.sigma))
+        return "<%s, %s, %s last played: %s team rating: %s>" % (self.hitters[0].name, self.hitters[1].name, self.hitters[2].name, self.getdatelastplayed(),str(self.teamrating.mu - 3.0*self.teamrating.sigma))
 
     def tupleratings(self):
         ratingslist=[]
@@ -181,7 +173,8 @@ class Team(db.Model):
                 "overallteamrating" : self.getoverallteamrating(),
                 "hitters" : [hitter.to_json for hitter in self.hitters],
         }
-    
+    def delete(self):
+        db.session.delete(self)
 
 
     
@@ -203,18 +196,13 @@ class Game(db.Model):
         remote_side='Team.id',
         backref=db.backref('awaygames', order_by=id))
     
-    awayhitters = db.relationship("Hitter", secondary=hitter_team_table, backref='awayteams')
-    homehitters = db.relationship("Hitter", secondary=hitter_team_table, backref='hometeams')
-
     #winner = ManyToOne('Teams', inverse = 'winner')
-    
     winner_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
     winner = db.relationship('Team',
         primaryjoin=('games.c.winner_id==teams.c.id'),
         remote_side='Team.id', 
         backref=db.backref('winninggames', order_by=id))
     
-    '''winner = db.Column(db.String)'''
     awaypoints = db.Column(db.Integer)
     homepoints = db.Column(db.Integer)
     #date = Field(db.DateTime, default=db.DateTime.db.DateTime.now())
@@ -251,6 +239,8 @@ class Game(db.Model):
                         'away':self.awaypoints
                     }
         }
+    def delete(self):
+        db.session.delete(self)
 
 def standaloneSetup():
     engine = create_engine('sqlite:///hitz.sqlite')
@@ -283,7 +273,25 @@ def jsonrestore(session):
     namefile='playersbackup.txt'
     gamefile='gamesbackup.txt'
     
-        
+    # need to figure out how to completely wipe the db as part of restore.
+    # For now, run heroku pg:reset <DATABASE> ; heroku run python manage.py db upgrade or heroku run python, from app import db, db.create_all()
+    '''
+    allgames=Game.query.all();
+    allteams=Team.query.all();
+    allhitters=Hitter.query.all();
+
+    for thisgame in allgames:
+        thisgame.delete()
+        session.commit()
+
+    for thisteam in allteams:
+        thisteam.delete()
+        session.commit()
+
+    for thishitter in allhitters:
+        thishitter.delete()
+        session.commit()    
+    ''' 
     results=[]
     names=[]
 
@@ -297,7 +305,7 @@ def jsonrestore(session):
     for name in names:
         get_or_create(session, Hitter, name=name)
     for game in results:
-        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], datetime.strptime(game['date'], '%Y-%m-%d %H:%M:%S'))
+        completeGame(session,game['home'], game['away'], game['winner'], game['score']['away'], game['score']['home'], datetime.strptime(game['date'], '%Y-%m-%d')) # took out  %H:%M:%S
     session.close()
     
 
