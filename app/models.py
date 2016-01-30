@@ -1,4 +1,4 @@
-from app import db
+from app import db
 from sqlalchemy.dialects.postgresql import JSON
 from flask.ext.restful import Resource, abort
 from flask.ext import restful
@@ -101,7 +101,7 @@ class Team(db.Model):
     name=db.Column(db.String)
     teamrating = db.Column(db.PickleType)
     overallteamrating = db.Column(db.PickleType)
-    hitters = db.relationship("Hitter", secondary=hitter_team_table, backref='teams')
+    hitters = db.relationship("Hitter", secondary=hitter_team_table, backref=db.backref('teams',cascade='all, delete')
 
     def __init__(self):
         self.teamrating = teamenv.Rating()
