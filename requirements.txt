@@ -1,6 +1,6 @@
 alembic==0.7.6
 aniso8601==1.0.0
-Flask==0.12.3
+Flask==1.0
 Flask-Admin==1.5.3
 Flask-Bower==1.1.1
 Flask-Login==0.2.11
