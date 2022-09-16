@@ -11,7 +11,7 @@ Flask-Script==2.0.5
 Flask-SQLAlchemy==2.0
 itsdangerous==0.24
 Jinja2>=2.10.1
-Mako==1.0.1
+Mako==1.2.2
 MarkupSafe==0.23
 mimerender==0.5.5
 psycopg2==2.6.1
